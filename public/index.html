@@ -256,7 +256,7 @@
     <!-- JavaScript remains the same -->
     <script>
     // Mendeteksi Developer Tools
-    (function detectDevTools() {
+        (function detectDevTools() {
         const devtools = new Function('debugger;');
         setInterval(() => {
             const startTime = performance.now();
@@ -267,27 +267,6 @@
             }
         }, 500);
     })();
-
-    // Mencegah klik kanan
-    document.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        window.location.reload(); // Refresh halaman
-    });
-
-    // Mencegah kombinasi tombol
-    document.addEventListener('keydown', (e) => {
-        if (
-            e.key === 'F12' || 
-            (e.ctrlKey && e.shiftKey && e.key === 'I') || 
-            (e.ctrlKey && e.key === 'U')
-        ) {
-            e.preventDefault();
-            window.location.reload(); // Refresh halaman
-        }
-    });
-
-    // Mendeteksi perubahan di DOM
-    setInterval(detectEruda, 1000);
         // Previous JavaScript code remains unchanged
         function showAlert(type, message) {
             const alertId = type === 'success' ? 'successAlert' : 'errorAlert';
@@ -302,7 +281,7 @@
         }
 
         function closeAlert(alertId) {
-            const alert = document.getElementById(alertId);
+           const alert = document.getElementById(alertId);
             alert.classList.remove('show');
             setTimeout(() => alert.style.display = 'none', 150);
         }
