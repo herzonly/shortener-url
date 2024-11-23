@@ -6,7 +6,7 @@ const requestIP = require('request-ip'); // Tambahkan package ini untuk mendapat
 
 const app = express();
 const port = 3000;
-const baseUrl = 'shortmyurl.us.kg';
+const baseUrl = 'https://shortmyurl.us.kg';
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
