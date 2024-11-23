@@ -255,18 +255,45 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <!-- JavaScript remains the same -->
     <script>
-        function detectEruda() {
-        if (typeof eruda !== 'undefined' || window.eruda) {
-            // Show the warning modal
-            $('#exampleModalCenter').modal('show');
-            
-            // Automatically refresh the page or close it
-            setTimeout(() => {
-                window.location.reload(); // Refresh the page
-                // Alternatively, you can use `window.close()` to close the window
-            },2000); // Adjust the delay if necessary
+    // Mendeteksi Developer Tools
+    (function detectDevTools() {
+        const devtools = new Function('debugger;');
+        setInterval(() => {
+            const startTime = performance.now();
+            devtools();
+            const endTime = performance.now();
+            if (endTime - startTime > 100) {
+                window.location.reload(); // Refresh halaman
+            }
+        }, 500);
+    })();
+
+    // Mencegah klik kanan
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        window.location.reload(); // Refresh halaman
+    });
+
+    // Mencegah kombinasi tombol
+    document.addEventListener('keydown', (e) => {
+        if (
+            e.key === 'F12' || 
+            (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+            (e.ctrlKey && e.key === 'U')
+        ) {
+            e.preventDefault();
+            window.location.reload(); // Refresh halaman
         }
-    }
+    });
+
+    // Mendeteksi perubahan di DOM
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach(() => {
+            window.location.reload(); // Refresh halaman
+        });
+    });
+
+    observer.observe(document.body, { attributes: true, childList: true, subtree: true });
     setInterval(detectEruda, 1000);
         // Previous JavaScript code remains unchanged
         function showAlert(type, message) {
