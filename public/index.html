@@ -287,13 +287,6 @@
     });
 
     // Mendeteksi perubahan di DOM
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach(() => {
-            window.location.reload(); // Refresh halaman
-        });
-    });
-
-    observer.observe(document.body, { attributes: true, childList: true, subtree: true });
     setInterval(detectEruda, 1000);
         // Previous JavaScript code remains unchanged
         function showAlert(type, message) {
