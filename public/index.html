@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener - Buat URL Pendek Kamu</title>
+    <meta name="description" content="Buat url kamu yang tadinya panjang sekarang jadi pendek dengan hosting url kami, coba sekarang juga">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        body {
+            font-family: poppins;
+            background: linear-gradient(-45deg, #d81e5b, #8b31d6, #2f4858, #1a759f);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .container {
+            animation: fadeIn 1s ease-out;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 12px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(139, 49, 214, 0.2);
+            border-color: #8b31d6;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #8b31d6, #1a759f);
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 49, 214, 0.3);
+        }
+
+        .btn-primary:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .btn-primary:hover:before {
+            left: 100%;
+        }
+
+        .alert {
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .result-container {
+            animation: fadeIn 0.5s ease-out;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .copy-button {
+            border-radius: 0 10px 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background: #8b31d6;
+            color: white;
+        }
+
+        .copied-toast {
+            background: rgba(40, 167, 69, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Modern typography */
+        h1.display-4 {
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(45deg, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(139, 49, 214, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 49, 214, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <!-- Rest of the HTML remains the same -->
+    <div id="successAlert" class="alert alert-success alert-dismissible fade" role="alert">
+        <span id="successMessage"></span>
+        <button type="button" class="btn-close" onclick="closeAlert('successAlert')"></button>
+    </div>
+    <div id="errorAlert" class="alert alert-danger alert-dismissible fade" role="alert">
+        <span id="errorMessage"></span>
+        <button type="button" class="btn-close" onclick="closeAlert('errorAlert')"></button>
+    </div>
+
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold">URL Shortener</h1>
+            <p class="lead text-white-50">Buat URL pendek untuk link Anda dengan mudah</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <form id="shortenForm">
+                            <div class="mb-3">
+                                <label for="url" class="form-label">URL Web</label>
+                                <input type="url" class="form-control" id="url" name="url" required
+                                    placeholder="https://example.com">
+                            </div>
+                            <div class="mb-4">
+                                <label for="name" class="form-label">Nama URL</label>
+                                <input type="text" class="form-control" id="name" name="name" required
+                                    placeholder="nama url"
+                                    pattern="[a-zA-Z0-9-]+"
+                                    title="Hanya huruf, angka, dan dash (-)">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                Buat URL
+                            </button>
+                        </form>
+
+                        <div id="resultContainer" class="result-container">
+                            <h6 class="mb-3">URL Pendek Anda:</h6>
+                            <div class="input-group">
+                                <input type="text" id="shortUrl" class="form-control" readonly>
+                                <button class="btn btn-outline-secondary copy-button" type="button" onclick="copyToClipboard()">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted mt-2 d-block">
+                                Klik ikon salin untuk menyalin URL ke clipboard
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- JavaScript remains the same -->
+    <script>
+        // Previous JavaScript code remains unchanged
+        function showAlert(type, message) {
+            const alertId = type === 'success' ? 'successAlert' : 'errorAlert';
+            const messageId = type === 'success' ? 'successMessage' : 'errorMessage';
+
+            document.getElementById(messageId).textContent = message;
+            const alert = document.getElementById(alertId);
+            alert.style.display = 'block';
+            alert.classList.add('show');
+
+            setTimeout(() => closeAlert(alertId), 5000);
+        }
+
+        function closeAlert(alertId) {
+            const alert = document.getElementById(alertId);
+            alert.classList.remove('show');
+            setTimeout(() => alert.style.display = 'none', 150);
+        }
+
+        function copyToClipboard() {
+            const shortUrl = document.getElementById('shortUrl');
+            shortUrl.select();
+            shortUrl.setSelectionRange(0, 99999);
+
+            navigator.clipboard.writeText(shortUrl.value).then(() => {
+                const toast = document.getElementById('copiedToast');
+                toast.style.display = 'block';
+
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 2000);
+            }).catch(err => {
+                showAlert('error', 'Gagal menyalin URL');
+            });
+        }
+
+        document.getElementById('shortenForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = {
+                url: document.getElementById('url').value,
+                name: document.getElementById('name').value
+            };
+
+            try {
+                const response = await fetch('/shorten', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('success', data.message);
+
+                    const resultContainer = document.getElementById('resultContainer');
+                    const shortUrlInput = document.getElementById('shortUrl');
+
+                    resultContainer.style.display = 'block';
+                    shortUrlInput.value = data.data.web_url;
+
+                    copyToClipboard();
+
+                    document.getElementById('url').value = '';
+                    document.getElementById('name').value = '';
+                } else {
+                    showAlert('error', data.message);
+                }
+            } catch (error) {
+                showAlert('error', 'Terjadi kesalahan saat membuat URL pendek');
+            }
+        });
+    </script>
+</body>
+</html>

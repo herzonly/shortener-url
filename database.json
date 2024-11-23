@@ -1,0 +1,52 @@
+{
+  "Herza": {
+    "name": "Herza",
+    "web_target": "https://api.betabotz.eu.org",
+    "web_url": "https://cfe5395e-9905-4838-8462-44e2b4549107-00-2dq4p1d66tc6t.sisko.replit.dev/Herza",
+    "created_at": "2024-11-22T22:24:07.311Z",
+    "created_by_ip": "36.85.216.81",
+    "visits": 0,
+    "visit_history": []
+  },
+  "Herzajzhz": {
+    "name": "Herzajzhz",
+    "web_target": "https://api.betabotz.eu.org",
+    "web_url": "https://cfe5395e-9905-4838-8462-44e2b4549107-00-2dq4p1d66tc6t.sisko.replit.dev/Herzajzhz",
+    "created_at": "2024-11-22T22:24:16.166Z",
+    "created_by_ip": "36.85.216.81",
+    "visits": 0,
+    "visit_history": []
+  },
+  "Knmml": {
+    "name": "Knmml",
+    "web_target": "https://api.betabotz.eu.org",
+    "web_url": "https://cfe5395e-9905-4838-8462-44e2b4549107-00-2dq4p1d66tc6t.sisko.replit.dev/Knmml",
+    "created_at": "2024-11-22T22:34:41.262Z",
+    "created_by_ip": "36.85.216.81",
+    "visits": 2,
+    "visit_history": [
+      {
+        "ip": "36.85.216.81",
+        "timestamp": "2024-11-22T22:34:52.689Z"
+      },
+      {
+        "ip": "36.85.216.81",
+        "timestamp": "2024-11-22T22:34:54.944Z"
+      }
+    ]
+  },
+  "Y": {
+    "name": "Y",
+    "web_target": "https://google.com",
+    "web_url": "https://cfe5395e-9905-4838-8462-44e2b4549107-00-2dq4p1d66tc6t.sisko.replit.dev/Y",
+    "created_at": "2024-11-23T04:47:17.735Z",
+    "created_by_ip": "36.85.216.81",
+    "visits": 1,
+    "visit_history": [
+      {
+        "ip": "36.85.216.81",
+        "timestamp": "2024-11-23T04:48:04.412Z"
+      }
+    ]
+  }
+}
