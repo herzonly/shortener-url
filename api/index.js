@@ -149,7 +149,7 @@ app.get('/:name', async (req, res) => {
     console.error('Error:', error);
     res.status(500).json({
       success: false,
-      message: `Terjadi kesalahan server${error}`,
+      message: `Terjadi kesalahan server: ${error}`,
       alertType: 'danger'
     });
   }
