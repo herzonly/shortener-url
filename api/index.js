@@ -2,41 +2,38 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 const path = require('path');
-const requestIP = require('request-ip'); // Middleware untuk mendapatkan IP pengguna
+const requestIP = require('request-ip'); // Tambahkan package ini untuk mendapatkan IP
 
 const app = express();
 const port = 3000;
-const baseUrl = 'shortmyurl.us.kg'; // URL dasar untuk pendek URL
+const baseUrl = 'shortmyurl.us.kg';
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(requestIP.mw()); // Middleware untuk IP pengguna
+app.use(express.static(path.join(__dirname, '../public')));
+app.use(requestIP.mw()); // Middleware untuk mendapatkan IP
 
-// Path untuk file database
-const dbPath = path.join(__dirname, 'database.json');
-
-// Helper function untuk membaca database
+// Helper function untuk read database
 async function readDatabase() {
   try {
-    const data = await fs.readFile(dbPath, 'utf8');
+    const data = await fs.readFile('database.json', 'utf8');
     return JSON.parse(data || '{}');
   } catch (error) {
     if (error.code === 'ENOENT') {
-      await fs.writeFile(dbPath, '{}'); // Jika file tidak ada, buat file kosong
+      await fs.writeFile('database.json', '{}');
       return {};
     }
     throw error;
   }
 }
 
-// Helper function untuk menulis database
+// Helper function untuk write database
 async function writeDatabase(data) {
-  await fs.writeFile(dbPath, JSON.stringify(data, null, 2));
+  await fs.writeFile('database.json', JSON.stringify(data, null, 2));
 }
 
-// Helper function untuk validasi URL
+// Helper untuk validasi URL
 function isValidUrl(string) {
   try {
     new URL(string);
@@ -46,7 +43,12 @@ function isValidUrl(string) {
   }
 }
 
-// Endpoint untuk membuat URL pendek
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+
+// Route untuk membuat URL pendek
 app.post('/shorten', async (req, res) => {
   try {
     const { url, name } = req.body;
@@ -70,11 +72,11 @@ app.post('/shorten', async (req, res) => {
       });
     }
 
-    // Validasi nama (hanya huruf, angka, dan dash)
+    // Validasi format nama (hanya alfanumerik dan dash)
     if (!/^[a-zA-Z0-9-]+$/.test(name)) {
       return res.status(400).json({
         success: false,
-        message: 'Nama hanya boleh mengandung huruf, angka, dan dash (-)!',
+        message: 'Nama URL hanya boleh mengandung huruf, angka, dan dash (-)!',
         alertType: 'danger'
       });
     }
@@ -90,16 +92,16 @@ app.post('/shorten', async (req, res) => {
       });
     }
 
-    // Simpan URL pendek ke database
+    // Simpan data dengan struktur baru
     const timestamp = new Date().toISOString();
     db[name] = {
-      name,
+      name: name,
       web_target: url,
       web_url: `${baseUrl}/${name}`,
       created_at: timestamp,
       created_by_ip: clientIP,
       visits: 0,
-      visit_history: [] // Menyimpan riwayat kunjungan
+      visit_history: [] // Array untuk menyimpan history kunjungan
     };
 
     await writeDatabase(db);
@@ -110,6 +112,7 @@ app.post('/shorten', async (req, res) => {
       alertType: 'success',
       data: db[name]
     });
+
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({
@@ -120,7 +123,7 @@ app.post('/shorten', async (req, res) => {
   }
 });
 
-// Endpoint untuk redirect URL pendek
+// Route untuk redirect URL pendek
 app.get('/:name', async (req, res) => {
   try {
     const { name } = req.params;
@@ -138,14 +141,15 @@ app.get('/:name', async (req, res) => {
 
     // Update statistik kunjungan
     const visitTimestamp = new Date().toISOString();
-    urlData.visits += 1;
-    urlData.visit_history.push({
+    db[name].visits += 1;
+    db[name].visit_history.push({
       ip: clientIP,
       timestamp: visitTimestamp
     });
 
     await writeDatabase(db);
     res.redirect(urlData.web_target);
+
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({
@@ -156,7 +160,7 @@ app.get('/:name', async (req, res) => {
   }
 });
 
-// Endpoint untuk mendapatkan statistik URL
+// Route untuk mendapatkan statistik URL
 app.get('/api/stats/:name', async (req, res) => {
   try {
     const { name } = req.params;
@@ -175,6 +179,7 @@ app.get('/api/stats/:name', async (req, res) => {
       success: true,
       data: urlData
     });
+
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({
